@@ -1,0 +1,28 @@
+{
+  "name": "loopback-kafka-producer-mixin",
+  "version": "1.0.2",
+  "description": "Kafka Producer mixin for loopback to add sendEvent method to your models",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skrafft/loopback-kafka-producer-mixin.git"
+  },
+  "keywords": [
+    "loopback",
+    "kafka",
+    "producer"
+  ],
+  "dependencies": {
+    "kafka-node": "^2.3.0",
+    "sqs-producer": "^1.6.2"
+  },
+  "author": "Sébastien Krafft",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/skrafft/loopback-kafka-producer-mixin/issues"
+  },
+  "homepage": "https://github.com/skrafft/loopback-kafka-producer-mixin#readme"
+}
