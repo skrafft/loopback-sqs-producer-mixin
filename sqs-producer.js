@@ -1,4 +1,5 @@
 'use strict';
+var crypto = require('crypto');
 
 module.exports = function(Model, options) {
   var canSend = true;
@@ -16,6 +17,10 @@ module.exports = function(Model, options) {
   if (!process.env.AWS_SECRET_ACCESS_KEY || !process.env.AWS_ACCESS_KEY_ID) {
     console.warn('No AWS authentication variables, events will not received. Please set AWS_SECRET_ACCESS_KEY and AWS_ACCESS_KEY_ID.');
     canSend = false;
+  }
+
+  var sha256 = function (str) {
+    return crypto.createHash('sha256').update(str).digest('hex');
   }
 
   if (canSend) {
@@ -38,10 +43,13 @@ module.exports = function(Model, options) {
   Model.sendEvent = function(model, next) {
     if (canSend) {
       if (!model.topic || !producers[model.topic]) {
-        return next(new Error('Topic not set or does not exist'));
+        if (next) {
+          return next(new Error('Topic not set or does not exist'));
+        }
       }
       var sentMessage = JSON.stringify(model.messages);
       producers[model.topic].send({
+        id: model.id || sha256(sentMessage),
         body: sentMessage,
         groupId: model.groupId,
         deduplicationId: model.deduplicationId
