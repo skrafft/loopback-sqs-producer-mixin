@@ -24,8 +24,8 @@ module.exports = function(Model, options) {
   }
 
   var template = function (str) {
-    if (template.indexOf("$") === 0) {
-      return process.env[template.substring(1)];
+    if (str.indexOf("$") === 0) {
+      return process.env[str.substring(1)];
     }
     return str;
   }
@@ -41,7 +41,7 @@ module.exports = function(Model, options) {
           var url = template(options.queueUrl[key]);
           if (url) {
             producers[key] = Producer.create({
-              queueUrl: ,
+              queueUrl: url,
               region: process.env.AWS_REGION
             });
           } else {
