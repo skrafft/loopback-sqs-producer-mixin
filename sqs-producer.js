@@ -23,6 +23,13 @@ module.exports = function(Model, options) {
     return crypto.createHash('sha256').update(str).digest('hex');
   }
 
+  var template = function (str) {
+    if (template.indexOf("$") === 0) {
+      return process.env[template.substring(1)];
+    }
+    return str;
+  }
+
   if (canSend) {
     var _initProducer = function() {
       if (!options.queueUrl) {
@@ -30,10 +37,16 @@ module.exports = function(Model, options) {
       }
       if (typeof options.queueUrl === 'object') {
         Object.keys(options.queueUrl).forEach(function (key) {
-          producers[key] = Producer.create({
-            queueUrl: options.queueUrl[key],
-            region: process.env.AWS_REGION
-          });
+          // Template function is used for json configuration in models
+          var url = template(options.queueUrl[key]);
+          if (url) {
+            producers[key] = Producer.create({
+              queueUrl: ,
+              region: process.env.AWS_REGION
+            });
+          } else {
+            console.error(options.queueUrl[key] + " resolves to empty variable");
+          }
         });
       }
     };
