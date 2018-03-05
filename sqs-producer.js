@@ -1,10 +1,10 @@
 'use strict';
 var crypto = require('crypto');
+var producers = {};
 
 module.exports = function(Model, options) {
   var canSend = true;
   var Producer = require('sqs-producer');
-  var producers = {};
 
   if (!process.env.SQS_QUEUE_URL && !options.queueUrl) {
     console.log('Amazon SQS Queue url not set, events will not be sent, please set SQS_QUEUE_URL env variable');
@@ -37,15 +37,17 @@ module.exports = function(Model, options) {
       }
       if (typeof options.queueUrl === 'object') {
         Object.keys(options.queueUrl).forEach(function (key) {
-          // Template function is used for json configuration in models
-          var url = template(options.queueUrl[key]);
-          if (url) {
-            producers[key] = Producer.create({
-              queueUrl: url,
-              region: process.env.AWS_REGION
-            });
-          } else {
-            console.error(options.queueUrl[key] + " resolves to empty variable");
+          if (!producers[key]) {
+            // Template function is used for json configuration in models
+            var url = template(options.queueUrl[key]);
+            if (url) {
+              producers[key] = Producer.create({
+                queueUrl: url,
+                region: process.env.AWS_REGION
+              });
+            } else {
+              console.error(options.queueUrl[key] + " resolves to empty variable");
+            }
           }
         });
       }
