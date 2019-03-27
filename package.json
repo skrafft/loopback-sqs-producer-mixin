@@ -1,6 +1,6 @@
 {
   "name": "loopback-sqs-producer-mixin",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Amazon Simple Queue Service Producer mixin for loopback to add sendEvent method to your models",
   "main": "index.js",
   "scripts": {
