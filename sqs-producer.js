@@ -2,6 +2,15 @@
 var crypto = require('crypto');
 var producers = {};
 
+const _buildLogMessage = (model, firstMessage, fields) => {
+  let logMessage = "Sending message to " + model.topic;
+  if (Array.isArray(fields) && fields.length) {
+    logMessage += ' - ';
+    logMessage += fields.map(field => (field + ': ' + firstMessage[field])).join(',');
+  }
+  return logMessage;
+}
+
 module.exports = function(Model, options) {
   var canSend = true;
   var Producer = require('sqs-producer');
@@ -61,6 +70,17 @@ module.exports = function(Model, options) {
         if (next) {
           return next(new Error('Topic not set or does not exist'));
         }
+      }
+      if (options.log) {
+        const firstMessage = {};
+        if (model.messages) {
+          if (Array.isArray(model.messages)) {
+            firstMessage = model.messages[0];
+          } else {
+            firstMessage = model.messages;
+          }
+        }
+        console.log(_buildLogMessage(model, firstMessage, options.log));
       }
       var sentMessage = JSON.stringify(model.messages);
       producers[model.topic].send({
