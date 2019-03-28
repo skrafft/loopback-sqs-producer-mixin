@@ -72,7 +72,7 @@ module.exports = function(Model, options) {
         }
       }
       if (options.log) {
-        const firstMessage = {};
+        let firstMessage = {};
         if (model.messages) {
           if (Array.isArray(model.messages)) {
             firstMessage = model.messages[0];
